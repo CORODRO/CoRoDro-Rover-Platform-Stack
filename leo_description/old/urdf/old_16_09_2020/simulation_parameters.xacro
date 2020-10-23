@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro"
+       name="parameter_file">
+
+<!-- Simulation Parameters-->
+
+  <xacro:property name="M_PI" value="3.14159"/>
+  <xacro:property name="M_SCALE" value="0.001"/>
+  <xacro:property name="F10_HEIGHT" value="0.004"/>
+  <xacro:property name="F4_HEIGHT" value="0.0525"/>
+  <xacro:property name="F3_HEIGHT" value="0.009"/>
+  <xacro:property name="AX12_HEIGHT" value="0.0385"/>
+  <xacro:property name="AX12_WIDTH" value="0.038"/>
+  <xacro:property name="F2_HEIGHT" value="0.0265"/>
+  <xacro:property name="MESH_EXT" value="dae"/>
+  <xacro:property name="MESH_SCALE" value="0.001"/>
+
+  <!-- Wheel Mounting Positions -->
+  <xacro:property name="wheelbase" value="${0.14211*2}" />                  <!-- m -->
+  <xacro:property name="wheel_vertical_offset" value="${0.13136*2}" />      <!-- m -->
+  <xacro:property name="track" value="${0.16833*2}" />                      <!-- m -->
+  <xacro:property name="wheel_radius" value="0.064905" />                   <!-- (x,y) m -->
+  <xacro:property name="wheel_width" value="0.06634" />                     <!-- (z) m -->
+  <xacro:property name="origin_x" value="0.14211" />                      <!-- m -->
+  <xacro:property name="origin_y" value="0.16833" />                      <!-- m -->
+  <xacro:property name="origin_z" value="0.13136" />                      <!-- m -->
+
+   <!-- LEO Body Dimensions [blender units] (z,y,x)-->
+  <xacro:property name="body_height" value="0.20733" />   <!-- m -->
+  <xacro:property name="body_width" value="0.36934" />    <!-- m -->
+  <xacro:property name="body_length" value="0.20733" />   <!-- m -->
+
+  <!-- LEO Body Dimensions [blender units] (z,y,x)-->
+  <xacro:property name="body_mass" value="26" />   <!-- kg -->
+  <xacro:property name="wheel_mass" value="1.4" />   <!-- kg -->
+
+  <!-- Lidar mass and dimensions-->
+  <xacro:property name="lidar_mass" value="0.190" />   <!-- kg -->
+  <xacro:property name="lidar_width" value="0.020" />   <!-- m -->
+  <xacro:property name="lidar_radius" value="0.035" />   <!-- m -->
+  <xacro:property name="lidar_x_position" value="0.08" />   <!-- m -->
+  <xacro:property name="lidar_y_position" value="0.00" />   <!-- m -->
+  <xacro:property name="lidar_z_position" value="0.00" />   <!-- m -->
+
+  <!-- Depth Camera Position, mass and dimensions-->
+  <xacro:property name="camera_link_x_origin" value="0.015" />   <!-- m -->
+  <xacro:property name="camera_link_y_origin" value="0.0" />   <!-- m -->
+  <xacro:property name="camera_link_z_origin" value="0.0" />   <!-- m -->
+  <!-- Gazebo plugins parameters-->
+  <xacro:property name="horizontal_fov" value="1.047" />   <!-- rad -->
+  <xacro:property name="image_format" value="R8G8B8" />   <!-- m -->
+  <xacro:property name="image_width" value="640" />   <!-- m -->
+  <xacro:property name="image_height" value="480" />   <!-- m -->
+  <xacro:property name="camera_clip_near" value="0.1" />   <!-- m -->
+  <xacro:property name="camera_clip_far" value="100" />   <!-- m -->
+  <xacro:property name="camera_update_rate" value="50" />   <!-- m // WARNING: THIS VALUE MUST BE THE SAME OF THE ONES CALLED IN THE LAUNCH FILES-->
+  <xacro:property name="point_cloud_cut_off" value="0.4" />
+  <xacro:property name="hack_baseline" value="0.07" />   
+  
+  <!-- Imu Position, mass and dimensions-->
+  <xacro:property name="imu_x_position" value="0.00" />   <!-- m -->
+  <xacro:property name="imu_y_position" value="0.00" />   <!-- m -->
+  <xacro:property name="imu_z_position" value="0.00" />   <!-- m -->
+
+
+
+
+
+</robot>

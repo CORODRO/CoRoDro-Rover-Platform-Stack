@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="gui" default="false"/>
+  <arg name="model" default="$(find leo_description)/urdf/leo_cv.urdf.xacro"/>
+  
+  <param name="robot_description" command="$(find xacro)/xacro --inorder $(arg model)" />
+  
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+    <param name="use_gui" value="$(arg gui)"/>
+    <param name="rate" value="50"/>
+  </node>
+
+<!-- From base footprint to base link -->
+  <node pkg="tf" type="static_transform_publisher" name="footprint_to_base" args= "0.0 0.0 0.0 0.0 0.0 0.0 base_footprint base_link 100" />
+
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen">
+  <param name="publish_frequency" value="50.0"/>
+  </node>
+
+  <node name="$(anon rviz)" pkg="rviz" type="rviz" args="-d $(find leo_description)/rviz/model.rviz" required="true"/>
+
+</launch>

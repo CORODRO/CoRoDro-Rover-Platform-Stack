@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro"
+       name="leo_description">
+
+
+  <xacro:arg name="robot_namespace" default=""/>
+
+
+
+  <material name="OffWhite">
+    <color rgba="0.8 0.8 0.8 0.9"/>
+  </material>
+
+  <!-- Import others xacro proprieties -->
+  <xacro:include filename="$(find leo_description)/urdf/materials.xacro" />
+  <xacro:include filename="$(find leo_description)/urdf/head.xacro" />
+
+  <!-- Wheel Mounting Positions -->
+  <xacro:property name="wheelbase" value="${0.14211*2}" />                  <!-- m -->
+  <xacro:property name="wheel_vertical_offset" value="${0.13136*2}" />      <!-- m -->
+  <xacro:property name="track" value="${0.16833*2}" />                      <!-- m -->
+  <xacro:property name="wheel_radius" value="0.064905" />                   <!-- (x,y) m -->
+  <xacro:property name="wheel_width" value="0.06634" />                     <!-- (z) m -->
+
+   <!-- LEO Body Dimensions [blender units] (z,y,x)-->
+  <xacro:property name="body_height" value="0.20733" />   <!-- m -->
+  <xacro:property name="body_width" value="0.36934" />    <!-- m -->
+  <xacro:property name="body_length" value="0.20733" />   <!-- m -->
+
+  <!-- LEO Body Dimensions [blender units] (z,y,x)-->
+  <xacro:property name="body_mass" value="40" />   <!-- kg -->
+  <xacro:property name="wheel_mass" value="10" />   <!-- kg -->
+
+  <!-- Base_footprint = dummy link to avoid problems with Rviz because of Inerzia in the base link-->
+  <link name="base_footprint"/>
+
+  <joint name="base_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+    <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+  </joint>
+
+  <link name="base_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://leo_description/meshes/base_link.STL"/>
+      </geometry>
+      <material name="base">
+        <color rgba="0.752941176470588 0.752941176470588 0.752941176470588 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${body_length} ${body_width} ${body_height}"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="${body_mass}"/>
+      <inertia ixx="${body_mass*(body_width*body_width+body_height*body_height)/12}" 
+               ixy="0.0" 
+               ixz="0.0" 
+               iyy="${body_mass*(body_length*body_length+body_height*body_height)/12}" 
+               iyz="0.0" 
+               izz="${body_mass*(body_length*body_length+body_width*body_width)/12}" /> <!-- kg*m^4 -->
+    </inertial>
+  </link>
+
+  <xacro:macro name="wheel_link" params="name model"> 
+    <link name="wheel_${name}_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://leo_description/meshes/wheel_${model}.STL"/>
+        </geometry>
+        <material name="wheel">
+          <color rgba="0.752941176470588 0.752941176470588 0.752941176470588 1"/>
+        </material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="${wheel_width}" radius="${wheel_radius}"/>
+        </geometry>
+      </collision>
+     <inertial>
+      <mass value="${wheel_mass}" />                              <!-- kg -->
+      <inertia ixx="${wheel_mass*(wheel_width*wheel_width+3*wheel_radius*wheel_radius)/12}" 
+               ixy="0.0" 
+               ixz="0.0" 
+               iyy="${wheel_mass*(wheel_width*wheel_width+3*wheel_radius*wheel_radius)/12}" 
+               iyz="0.0" 
+               izz="${wheel_mass*(wheel_radius*wheel_radius)/2}" /> <!-- kg*m^4 -->
+    </inertial>
+    </link>
+  </xacro:macro>
+
+  <xacro:wheel_link name="FL" model="left"/>
+  <xacro:wheel_link name="FR" model="right"/>
+  <xacro:wheel_link name="RL" model="left"/>
+  <xacro:wheel_link name="RR" model="right"/>
+  
+  <joint name="wheel_FL_joint" type="continuous">
+    <origin xyz="0.14211 0.16833 -0.13136" rpy="${pi/2} 0 0"/>
+    <parent link="base_link"/>
+    <child link="wheel_FL_link"/>
+    <axis xyz="0 0 -1"/>
+  </joint>
+
+  <joint name="wheel_FR_joint" type="continuous">
+    <origin xyz="0.14211 -0.16026 -0.13136" rpy="${pi/2} 0 0"/>
+    <parent link="base_link"/>
+    <child link="wheel_FR_link"/>
+    <axis xyz="0 0 -1"/>
+  </joint>
+
+  <joint name="wheel_RL_joint" type="continuous">
+    <origin xyz="-0.14704 0.16833 -0.13136" rpy="${pi/2} 0 0"/>
+    <parent link="base_link"/>
+    <child link="wheel_RL_link"/>
+    <axis xyz="0 0 -1"/>
+  </joint>
+
+  <joint name="wheel_RR_joint" type="continuous">
+    <origin xyz="-0.14704 -0.16026 -0.13136" rpy="${pi/2} 0 0"/>
+    <parent link="base_link"/>
+    <child link="wheel_RR_link"/>
+    <axis xyz="0 0 -1"/>
+  </joint>
+ 
+  <!--Camera Links--> 
+
+    <!-- Attach the head -->
+    <leo_head parent="base_link" color="OffWhite">
+      <origin xyz="0.015 0.05 0.00"/>
+    </leo_head>
+
+
+  <!--IMU Link--> 
+
+  <link name="imu_link"/>
+
+  <joint name="imu_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="imu_link"/>
+    <origin xyz="0.05 0 0.00" rpy="0 0 0"/>
+  </joint>
+
+  <!--Scanner Link--> 
+
+  <joint name="scan_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="base_scan"/>
+    <origin xyz="0.04 0 0.0" rpy="0 0 0"/>
+  </joint>
+
+  <link name="base_scan">
+    <visual>
+      <origin xyz="0.04 0 0.0" rpy="1.5707 0 0"/>
+      <geometry>
+        <mesh filename="package://leo_description/meshes/rplidar.dae" scale="0.001 0.001 0.001" />
+      </geometry>
+    </visual>
+
+    <collision>
+      <origin xyz=" 0 0 0.0" rpy="1.5707 0 0"/>
+      <geometry>
+        <cylinder length="0.01" radius="0.055"/>
+      </geometry>
+    </collision>
+
+    <inertial>
+      <mass value="0.114" />
+      <origin xyz="0 0 0" />
+      <inertia ixx="0.001" ixy="0.0" ixz="0.0"
+               iyy="0.001" iyz="0.0"
+               izz="0.001" />
+    </inertial>
+  </link>
+
+<!-- ********************************************************************************************************** --> 
+<!--Gazebo--> 
+  <gazebo>
+    <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+      <legacyModeNS>true</legacyModeNS>
+      <robotNamespace>/leo_rover</robotNamespace>
+    </plugin>
+  </gazebo>
+
+<gazebo reference="base_link">
+    <material>Gazebo/Red</material>
+  </gazebo>
+
+  <gazebo reference="laser">
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+  <gazebo reference="camera_link">
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+  <gazebo reference="wheel_FL_link">
+    <mu1>0.1</mu1>
+    <mu2>0.1</mu2>
+    <kp>500000.0</kp>
+    <kd>10.0</kd>
+    <minDepth>0.001</minDepth>
+    <maxVel>0.1</maxVel>
+    <fdir1>1 0 0</fdir1>
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+  <gazebo reference="wheel_FR_link">
+    <mu1>0.1</mu1>
+    <mu2>0.1</mu2>
+    <kp>500000.0</kp>
+    <kd>10.0</kd>
+    <minDepth>0.001</minDepth>
+    <maxVel>0.1</maxVel>
+    <fdir1>1 0 0</fdir1>
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+  <gazebo reference="wheel_RL_link">
+    <mu1>0.1</mu1>
+    <mu2>0.1</mu2>
+    <kp>500000.0</kp>
+    <kd>10.0</kd>
+    <minDepth>0.001</minDepth>
+    <maxVel>0.1</maxVel>
+    <fdir1>1 0 0</fdir1>
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+  <gazebo reference="wheel_RR_link">
+    <mu1>0.1</mu1>
+    <mu2>0.1</mu2>
+    <kp>500000.0</kp>
+    <kd>10.0</kd>
+    <minDepth>0.001</minDepth>
+    <maxVel>0.1</maxVel>
+    <fdir1>1 0 0</fdir1>
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+   <gazebo reference="kinect_link">
+    <sensor type="depth" name="openni_camera_camera">
+      <always_on>1</always_on>
+      <visualize>true</visualize>
+      <camera>
+        <horizontal_fov>1.047</horizontal_fov>
+        <image>
+          <width>640</width>
+          <height>480</height>
+          <format>R8G8B8</format>
+        </image>
+        <depth_camera>
+
+        </depth_camera>
+        <clip>
+          <near>0.1</near>
+          <far>100</far>
+        </clip>
+      </camera>
+      <plugin name="kinect_controller" filename="libgazebo_ros_openni_kinect.so">
+        <alwaysOn>true</alwaysOn>
+        <updateRate>10.0</updateRate>
+        <cameraName>camera</cameraName>
+        <frameName>kinect_depth_optical_frame</frameName>
+        <imageTopicName>rgb/image_raw</imageTopicName>
+        <depthImageTopicName>depth/image_raw</depthImageTopicName>
+        <pointCloudTopicName>depth/points</pointCloudTopicName>
+        <cameraInfoTopicName>rgb/camera_info</cameraInfoTopicName>
+        <depthImageCameraInfoTopicName>depth/camera_info</depthImageCameraInfoTopicName>
+        <pointCloudCutoff>0.4</pointCloudCutoff>
+        <hackBaseline>0.07</hackBaseline>
+        <distortionK1>0.0</distortionK1>
+        <distortionK2>0.0</distortionK2>
+        <distortionK3>0.0</distortionK3>
+        <distortionT1>0.0</distortionT1>
+        <distortionT2>0.0</distortionT2>
+        <CxPrime>0.0</CxPrime>
+        <Cx>0.0</Cx>
+        <Cy>0.0</Cy>
+        <focalLength>0.0</focalLength>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <gazebo reference="base_scan">
+    <sensor type="ray" name="lds_lfcd_sensor">
+      <pose>0 0 0.00 0 0 0</pose>
+      <visualize>true</visualize>
+      <update_rate>5</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>720</samples>
+            <resolution>1</resolution>
+            <min_angle>-1.0472</min_angle>
+            <max_angle>1.0472</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.2</min>
+          <max>5</max>
+          <resolution>0.015</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.01</stddev>
+        </noise>
+      </ray>
+      <plugin name="gazebo_ros_lds_lfcd_controller" filename="libgazebo_ros_laser.so">
+        <topicName>scan</topicName>
+        <frameName>base_scan</frameName>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+
+   <gazebo reference="imu_link">
+    <gravity>true</gravity>
+    <sensor name="imu_sensor" type="imu">
+      <always_on>true</always_on>
+      <update_rate>10</update_rate>
+      <visualize>true</visualize>
+      <topic>imu</topic>
+      <plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
+        <topicName>imu</topicName>
+        <bodyName>imu_link</bodyName>
+        <updateRateHZ>10.0</updateRateHZ>
+        <gaussianNoise>0.0</gaussianNoise>
+        <xyzOffset>0 0 0</xyzOffset>
+        <rpyOffset>0 0 0</rpyOffset>
+        <frameName>imu_link</frameName>
+      </plugin>
+      <pose>0 0 0 0 0 0</pose>
+    </sensor>
+  </gazebo>
+
+
+  <gazebo>
+    <plugin name="skid_steer_drive_controller" filename="libgazebo_ros_skid_steer_drive.so">
+      <robotNamespace>/</robotNamespace>
+      <updateRate>100</updateRate>
+      <odometryTopic>odom</odometryTopic>
+      <odometryFrame>odom</odometryFrame>
+      <odometrySource>world</odometrySource>
+      <publishOdomTF>true</publishOdomTF>
+      <robotBaseFrame>base_footprint</robotBaseFrame>
+      <publishWheelTF>true</publishWheelTF>
+      <publishTf>true</publishTf>
+      <publishWheelJointState>true</publishWheelJointState>
+      <wheelSeparation>0.182</wheelSeparation>
+      <wheelDiameter>0.064905</wheelDiameter>
+      <torque>10</torque>
+      <leftFrontJoint>wheel_FL_joint</leftFrontJoint>
+      <rightFrontJoint>wheel_FR_joint</rightFrontJoint>
+      <leftRearJoint>wheel_RL_joint</leftRearJoint>
+      <rightRearJoint>wheel_RR_joint</rightRearJoint>
+      <topicName>cmd_vel</topicName>
+      <commandTopic>cmd_vel</commandTopic>
+      <broadcastTF>true</broadcastTF>
+      <covariance_x>0.000100</covariance_x>
+      <covariance_y>0.000100</covariance_y>
+      <covariance_yaw>0.010000</covariance_yaw>
+    </plugin>
+  </gazebo>
+
+<!-- ********************************************************************************************************** --> 
+<!--Gazebo Transmissions in actuators--> 
+
+  <transmission name="trasmission_head_pan_link">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="head_pan_joint">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="motor_head_pan_link">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+  <transmission name="trasmission_head_tilt_link">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="head_tilt_joint">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="motor_head_tilt_link">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+
+</robot>

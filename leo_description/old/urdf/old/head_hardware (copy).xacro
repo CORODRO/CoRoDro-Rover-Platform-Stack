@@ -1,0 +1,177 @@
+<?xml version="1.0"?>
+<robot name="head_hardware" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- The data are taken from ROS by Example vol 1. We assumed this type of tilting camera because it was compliant with what we were trying to achieve -->
+  <!-- fake head_tilt_link joint -->
+  <xacro:macro name="bioloid_F10_fixed" params="parent number x_loc y_loc z_loc color">
+    <joint name="bioloid_F10_${number}_joint" type="fixed">
+      <origin xyz="${x_loc} ${y_loc} ${z_loc}" rpy="0 0 0" />
+      <parent link="${parent}"/>
+      <child link="bioloid_F10_${number}_link" />
+    </joint>
+
+    <link name="bioloid_F10_${number}_link">
+      <inertial>
+        <mass value="0.00001" />
+        <origin xyz="0 0 0" />SS
+        <inertia ixx="1.0" ixy="0.0" ixz="0.0"
+          iyy="1.0" iyz="0.0"
+          izz="1.0" />
+      </inertial>
+
+      <visual>
+        <origin xyz=" 0 0 0 " rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://leo_description/meshes/F10.${MESH_EXT}" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+          <!--box size="0.025 0.038 0.004"/-->
+        </geometry>
+        <material name="${color}"/>
+      </visual>
+
+      <collision>
+        <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+        <geometry>
+          <box size="0.025 0.038 0.004"/>
+        </geometry>
+      </collision>
+    </link>
+ </xacro:macro>
+
+  <xacro:macro name="bioloid_F3_fixed" params="parent number x_loc y_loc z_loc r p y color">
+    <joint name="bioloid_F3_${number}_joint" type="fixed">
+      <origin xyz="${x_loc} ${y_loc} ${z_loc}" rpy="${r} ${p} ${y}" />
+      <parent link="${parent}"/>
+      <child link="bioloid_F3_head_${number}_link" />
+    </joint>
+
+    <link name="bioloid_F3_${number}_link">
+      <inertial>
+        <mass value="0.00001" />
+        <origin xyz="0 0 0" />
+        <inertia ixx="1.0" ixy="0.0" ixz="0.0"
+          iyy="1.0" iyz="0.0"
+          izz="1.0" />
+      </inertial>
+
+      <visual>
+        <origin xyz=" 0 0 0 " rpy="0 0 0" />
+        <geometry>
+          <!--mesh filename="package://leo_description/meshes/F3.${MESH_EXT}" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/-->
+          <box size="0.025 0.038 0.009"/>
+        </geometry>
+        <material name="${color}"/>
+      </visual>
+
+      <collision>
+        <origin xyz="0.0 0.0 -0.0045" rpy="0 0 0" />
+        <geometry>
+          <box size="0.025 0.038 0.009"/>
+        </geometry>
+      </collision>
+    </link>
+ </xacro:macro>
+
+  <xacro:macro name="dynamixel_AX12_fixed" params="parent number x_loc y_loc z_loc r p y">
+    <joint name="dynamixel_AX12_${number}_joint" type="fixed">
+      <origin xyz="${x_loc} ${y_loc} ${z_loc}" rpy="${r} ${p} ${y}" />
+      <parent link="${parent}"/>
+      <child link="dynamixel_AX12_${number}_link" />
+    </joint>
+
+    <link name="dynamixel_AX12_${number}_link">
+      <inertial>
+        <mass value="0.00001" />
+        <origin xyz="0 0 0" />
+        <inertia ixx="1.0" ixy="0.0" ixz="0.0"
+          iyy="1.0" iyz="0.0"
+          izz="1.0" />
+      </inertial>
+
+      <visual>
+        <origin xyz=" 0 0 0 " rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://leo_description/meshes/ax12_box.${MESH_EXT}" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="green"/>
+      </visual>
+
+      <collision>
+        <origin xyz="0.0 0.0 -0.0045" rpy="0 0 0" />
+        <geometry>
+          <box size="0.025 0.038 0.009"/>
+        </geometry>
+      </collision>
+    </link>
+ </xacro:macro>
+
+  <xacro:macro name="bioloid_F3_head_revolute" params="parent number joint_name x_loc y_loc z_loc ulimit llimit r p y color">
+    <joint name="${joint_name}_joint" type="revolute">
+      <origin xyz="${x_loc} ${y_loc} ${z_loc}" rpy="${r} ${p} ${y}" />
+      <parent link="${parent}"/>
+       <axis xyz="0 0 -1"/>
+      <limit effort="30" velocity="1.0" lower="${llimit}" upper="${ulimit}" />
+      <child link="bioloid_F3_head_${number}_link" />
+    </joint>
+
+    <link name="bioloid_F3_head_${number}_link">
+      <inertial>
+        <mass value="0.00001" />
+        <origin xyz="0 0 0" />
+        <inertia ixx="1.0" ixy="0.0" ixz="0.0"
+          iyy="1.0" iyz="0.0"
+          izz="1.0" />
+      </inertial>
+
+      <visual>
+        <origin xyz=" 0 0 0 " rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://leo_description/meshes/F3.${MESH_EXT}" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="${color}"/>
+      </visual>
+
+      <collision>
+        <origin xyz="0.0 0.0 -0.0045" rpy="0 0 0" />
+        <geometry>
+          <box size="0.025 0.038 0.009"/>
+        </geometry>
+      </collision>
+    </link>
+ </xacro:macro>
+
+  <xacro:macro name="bioloid_F4_head_revolute" params="parent number joint_name x_loc y_loc z_loc ulimit llimit color">
+    <joint name="${joint_name}_joint" type="revolute">
+      <origin xyz="${x_loc} ${y_loc} ${z_loc}" rpy="0 0 0" />
+      <parent link="${parent}"/>
+      <axis xyz="0 -1 0"/>
+      <limit effort="30" velocity="1.0" lower="${llimit}" upper="${ulimit}" />
+      <child link="bioloid_F4_head_${number}_link" />
+    </joint>
+
+    <link name="bioloid_F4_head_${number}_link">
+      <inertial>
+        <mass value="0.00001" />
+        <origin xyz="0 0 0" />
+        <inertia ixx="1.0" ixy="0.0" ixz="0.0"
+          iyy="1.0" iyz="0.0"
+          izz="1.0" />
+      </inertial>
+
+      <visual>
+        <origin xyz=" 0 0 0 " rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://leo_description/meshes/F4.${MESH_EXT}" scale="${M_SCALE} ${M_SCALE} ${M_SCALE}"/>
+        </geometry>
+        <material name="${color}"/>
+      </visual>
+
+      <collision>
+        <origin xyz="0.0 0.0 0.0215" rpy="0 0 0" />
+        <geometry>
+          <box size="0.028 0.0485 0.065"/>
+        </geometry>
+      </collision>
+    </link>
+ </xacro:macro>
+
+</robot>

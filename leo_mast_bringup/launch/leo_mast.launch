@@ -1,0 +1,11 @@
+<launch>
+  <arg name="sim" default="false"/>
+
+  <node name="arbotix" pkg="arbotix_python" type="arbotix_driver" output="screen">
+    <rosparam file="$(find leo_mast_bringup)/config/leo_mast.yaml" command="load"/>
+    <param name="sim" value="$(arg sim)"/>
+  </node>
+
+  <node name="mast_controller" pkg="leo_mast_bringup" type="mast_controller" output="screen"/>
+
+</launch>

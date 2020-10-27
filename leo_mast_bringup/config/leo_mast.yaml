@@ -1,0 +1,25 @@
+port: /dev/ttyUSB0
+read_rate: 15
+write_rate: 25
+joints: 
+    mast_1_joint: 
+        id: 1
+        type: dynamixel
+        neutral: 512
+        min_angle: -90
+        max_angle: 90
+        max_speed: 90
+    mast_2_joint:
+        id: 2
+        type: dynamixel
+        neutral: 512
+        min_angle: -180
+        max_angle: 180
+        max_speed: 90
+    mast_3_joint: 
+        id: 3
+        type: dynamixel
+        neutral: 512
+        min_angle: -90
+        max_angle: 90
+        max_speed: 90

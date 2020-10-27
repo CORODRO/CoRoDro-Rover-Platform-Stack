@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<launch>
+
+<!-- ************************************************** -->
+<!-- Put simulation parameters here: -->
+<arg name="record_bag" default = "true"/>
+
+<!-- ************************************************** -->
+
+ <!-- Rosbag play (the bag is saved in leo_rover) -->
+ <group if= "$(arg record_bag)">
+  <node pkg="rosbag" type="record" name="record_leo_tests" output="screen" args=" -o ~/Desktop/   /imu/data  /controllers/diff_drive/odom 
+        /controllers/diff_drive/cmd_vel
+        
+  "/>
+ </group>
+
+</launch>

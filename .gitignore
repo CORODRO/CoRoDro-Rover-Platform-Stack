@@ -1,0 +1,21 @@
+# ROS workspace outputs
+build/
+devel/
+install/
+logs/
+.catkin_tools/
+.catkin_workspace
+
+# Python
+__pycache__/
+*.pyc
+
+# Editors and OS files
+.idea/
+.vscode/
+.DS_Store
+*.swp
+*.swo
+*~
+*.orig
+*.save

@@ -37,3 +37,5 @@ obstacle_layer:
 inflation_layer:
   inflation_radius: 0.4
   cost_scaling_factor: 30.0
+# TODO(corodro): Re-test costmap tuning with the current sensors and footprint
+# before changing obstacle, inflation, or observation parameters.

@@ -18,3 +18,5 @@ global_costmap:
     - {name: static_layer,      type: "costmap_2d::StaticLayer"}
     - {name: obstacle_layer,    type: "costmap_2d::ObstacleLayer"}
     - {name: inflation_layer,   type: "costmap_2d::InflationLayer"}
+# TODO(corodro): Validate global costmap settings on representative maps before
+# retuning them for a new rover or environment.

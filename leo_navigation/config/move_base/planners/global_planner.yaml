@@ -1,3 +1,5 @@
+# TODO(corodro): Re-test global planner behavior before changing these scoring
+# and search settings. They are tuned for the original rover environment.
 # http://wiki.ros.org/global_planner#Parameters
 GlobalPlanner:
   allow_unknown: true

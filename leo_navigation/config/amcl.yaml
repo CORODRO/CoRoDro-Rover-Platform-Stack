@@ -51,3 +51,5 @@ odom_frame_id: odom
 base_frame_id: base_link
 global_frame_id: map
 tf_broadcast: true
+# TODO(corodro): Validate these localization parameters on the current rover
+# and map set before retuning them. They were calibrated for the original setup.

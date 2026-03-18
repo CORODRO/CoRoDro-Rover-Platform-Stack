@@ -1,53 +1,74 @@
 # LEO Rover ROS Model
 
-ROS 1 packages for simulating, launching, visualizing, and navigating the Leo Rover platform used as the CORODRO rover base.
+`LEO_Rover_ROS_Model` is the standalone rover-platform repository used as the base for the CORODRO rover. It is the best place to understand the rover itself without the extra mission orchestration from `IGLUNA-FC-Code`.
 
 ## Why This Repo Matters
 
-If you want a cleaner entry point than the full mission repository, this is it. The packages here are closer to a reusable rover platform stack:
+This repository separates the reusable rover platform stack from the full field-campaign code. It gives students a cleaner place to study:
 
-- description files,
+- the robot description and URDF model,
 - Gazebo simulation,
-- bringup,
+- hardware bringup,
 - teleoperation,
-- visualization,
-- navigation.
+- RViz visualization,
+- localization and navigation.
 
 ## Added Value
 
-- A student-friendly rover base stack that can be studied independently from the full mission code.
-- A practical example of how a research project extends a commercial/open rover platform.
-- A compact ROS 1 navigation stack with well-separated packages.
+- A student-friendly rover base stack that can be read independently from the full mission repository.
+- A practical example of how the Leo Rover platform was extended for the CORODRO project.
+- A compact ROS 1 navigation stack with well-separated packages and clear launch entry points.
 
 ## Algorithms Used
 
-- `robot_localization` EKF for wheel odometry and IMU fusion.
+- `robot_localization` EKF for wheel odometry and IMU fusion in `leo_navigation/launch/odometry.launch`.
 - Madgwick IMU filtering through `imu_filter_madgwick`.
-- gmapping for online 2D SLAM.
-- AMCL for map-based localization.
-- `global_planner` in Dijkstra mode for global path planning.
-- `TrajectoryPlannerROS` with `dwa: true` for local planning.
+- `slam_gmapping` for online 2D SLAM.
+- `amcl` for map-based localization.
+- `global_planner` with `use_dijkstra: true` for global path planning.
+- `TrajectoryPlannerROS` with `dwa: true` for local motion planning.
+- Differential-drive simulation in Gazebo through `leo_gazebo/src/differential_plugin.cpp`.
 
 ## Repository Map
 
-- `leo_description/`: URDF, meshes, and robot description launch files.
-- `leo_gazebo/`: Gazebo model spawn and differential-drive plugin.
-- `leo_bringup/`: hardware/software bringup configuration.
-- `leo_navigation/`: localization and navigation launch/configuration.
+- `leo_description/`: URDF, xacro files, meshes, and the `robot_description` launcher.
+- `leo_gazebo/`: Gazebo launch files and the rover differential-drive plugin.
+- `leo_bringup/`: bringup configuration for the physical rover stack.
+- `leo_navigation/`: odometry fusion, SLAM, AMCL, and move_base configuration.
 - `leo_teleop/`: joystick teleoperation.
-- `leo_viz/`: RViz configurations.
-- `leo_mast_bringup/`: mast-related configuration.
+- `leo_viz/`: RViz launch files and visualization profiles.
+- `leo_mast_bringup/`: mast-related bringup configuration.
+- `leo_tests/`: auxiliary launch files for tests and experiments.
+
+## Suggested Learning Path
+
+1. Start with `leo_description/launch/description.launch` to understand the robot model.
+2. Move to `leo_gazebo/launch/leo_gazebo.launch` to see the rover in simulation.
+3. Study `leo_navigation/launch/odometry.launch` for sensor fusion.
+4. Study `leo_navigation/launch/gmapping.launch` and `leo_navigation/launch/amcl.launch` for localization.
+5. Finish with `leo_navigation/launch/move_base.launch` and `leo_navigation/launch/navigation.launch` for navigation.
 
 ## Quick Start
 
-1. Create a ROS 1 catkin workspace.
-2. Add this repository to `src/`.
-3. Install the dependencies used by the navigation and Gazebo packages.
-4. Build with `catkin_make`.
-5. Start with `leo_description` or `leo_gazebo`, then move to `leo_navigation`.
+1. Create a ROS 1 catkin workspace and place this repository in `src/`.
+2. Install the ROS dependencies used by Gazebo, navigation, and teleoperation.
+3. Build the workspace with `catkin_make`.
+4. Launch the robot description with `roslaunch leo_description description.launch`.
+5. Launch Gazebo with `roslaunch leo_gazebo leo_gazebo.launch`.
+6. For navigation experiments, use the launch files in `leo_navigation/`.
 
 ## Notes For Students
 
-- `leo_navigation` is the best package to study if your interest is localization and path planning.
+- `leo_navigation` is the best package to study first if your focus is localization and path planning.
 - `leo_description/old/` is historical material and should not be your default reference.
-- The navigation parameters are tuned for this rover and sensor suite; treat them as a baseline, not universal values.
+- The navigation demo nodes under `leo_navigation/nodes/` are educational examples, not the main production path.
+- Some navigation demo scripts are also present in `IGLUNA-FC-Code`; treat this repository as the cleaner rover-platform source.
+- The navigation parameters are tuned for this rover and sensor suite, so use them as a baseline rather than universal defaults.
+
+## TODOs Before Retuning
+
+- Validate `leo_navigation/config/ekf_localization_node/` against the current IMU, wheel odometry topic, and frame tree before changing fusion parameters.
+- Re-tune `leo_navigation/config/slam_gmapping.yaml` only after checking the live lidar or scan source used by the rover.
+- Review the `leo_navigation/config/move_base/` costmap and planner YAML files in simulation or hardware before changing navigation behavior.
+- Re-validate `leo_navigation/config/amcl.yaml` on a representative map before adjusting localization thresholds or noise values.
+- Keep `leo_description/old/` as archive material unless you intentionally want to recover a past rover model.

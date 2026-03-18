@@ -9,7 +9,7 @@
     
   <param if="$(arg upload_description)"
          name="robot_description" 
-         command="xacro --inorder $(find leo_description)/urdf/leo.urdf.xacro"/>
+         command="$(find xacro)/xacro $(find leo_description)/urdf/leo.urdf.xacro"/>
 
   <node name="robot_state_publisher"
         pkg="robot_state_publisher"

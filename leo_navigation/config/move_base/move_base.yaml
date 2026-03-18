@@ -18,3 +18,5 @@ base_local_planner: base_local_planner/TrajectoryPlannerROS
 recovery_behavior_enabled: true
 clearing_rotation_allowed: true
 conservative_reset_dist: 2.0
+# TODO(corodro): Validate move_base tuning in simulation or on hardware before
+# changing these settings. They were tuned for the original rover stack.

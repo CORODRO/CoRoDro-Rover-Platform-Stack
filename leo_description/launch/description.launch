@@ -4,6 +4,6 @@
   <arg name="model" default="$(find leo_description)/urdf/leo.urdf.xacro"/>
 
   <param name="robot_description" 
-         command="xacro --inorder $(arg model)"/>
+         command="$(find xacro)/xacro $(arg model)"/>
    
 </launch>

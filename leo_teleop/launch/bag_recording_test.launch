@@ -1,18 +1,15 @@
 <?xml version="1.0"?>
 <launch>
 
-<!-- ************************************************** -->
-<!-- Put simulation parameters here: -->
-<arg name="record_bag" default = "true"/>
+  <arg name="record_bag" default="true"/>
+  <arg name="bag_prefix" default="leo_teleop_test"/>
 
-<!-- ************************************************** -->
-
- <!-- Rosbag play (the bag is saved in leo_rover) -->
- <group if= "$(arg record_bag)">
-  <node pkg="rosbag" type="record" name="record_leo_tests" output="screen" args=" 
-        /joint_states /sbg_out_Imu /vrpn_client_node/LeoRover/pose /wheel_odom
-        /move_base_simple/goal /cmd_vel
-  "/>
- </group>
+  <group if="$(arg record_bag)">
+    <node pkg="rosbag"
+          type="record"
+          name="record_leo_tests"
+          output="screen"
+          args="-o $(arg bag_prefix) /joint_states /sbg_out_Imu /vrpn_client_node/LeoRover/pose /wheel_odom /move_base_simple/goal /cmd_vel"/>
+  </group>
 
 </launch>

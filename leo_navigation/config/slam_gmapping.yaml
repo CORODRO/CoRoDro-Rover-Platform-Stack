@@ -47,3 +47,5 @@ xmax: 10.0
 ymin: -10.0
 ymax: 10.0
 delta: 0.02
+# TODO(corodro): Validate these SLAM parameters against the active scan source
+# and environment before changing them. They are tuned for the original rover.

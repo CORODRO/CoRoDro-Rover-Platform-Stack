@@ -1,31 +1,19 @@
 #!/usr/bin/env python
 
-""" move_base_square.py - Version 1.1 2013-12-20
-    Command a robot to move in a square using move_base actions..
-    Created for the Pi Robot Project: http://www.pirobot.org
-    Copyright (c) 2012 Patrick Goebel.  All rights reserved.
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.5
-    
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details at:
-    
-    http://www.gnu.org/licenses/gpl.htmlPoint
-      
+"""Drive the rover through a square of move_base waypoints.
+
+This educational node publishes four map-frame waypoints, visualizes them in
+RViz, and sends them one by one to the move_base action server.
 """
 
 import rospy
 import actionlib
-from actionlib_msgs.msg import *
+from actionlib_msgs.msg import GoalStatus
 from geometry_msgs.msg import Pose, Point, Quaternion, Twist
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 from tf.transformations import quaternion_from_euler
 from visualization_msgs.msg import Marker
-from math import radians, pi
+from math import pi
 
 class MoveBaseSquare():
     def __init__(self):
@@ -58,14 +46,11 @@ class MoveBaseSquare():
         waypoints.append(Pose(Point(0.0, square_size, 0.0), quaternions[2]))
         waypoints.append(Pose(Point(0.0, 0.0, 0.0), quaternions[3]))
         
-        # Initialize the visualization markers for RViz
-        # self.init_markers()
+        # Initialize the visualization markers for RViz.
+        self.init_markers()
         
-        # # Set a visualization marker at each waypoint        
-        # for waypoint in waypoints:           
-        #     p = Point()
-        #     p = waypoint.position
-        #     self.markers.points.append(p)
+        for waypoint in waypoints:
+            self.markers.points.append(waypoint.position)
             
         # Publisher to manually control the robot (e.g. to stop it, queue_size=5)
         self.cmd_vel_pub = rospy.Publisher('cmd_vel', Twist, queue_size=5)
@@ -107,28 +92,26 @@ class MoveBaseSquare():
             i += 1
         
     def move(self, goal):
-            # Send the goal pose to the MoveBaseAction server
-            self.move_base.send_goal(goal)
-            
-            # Allow 1 minute to get there
-            finished_within_time = self.move_base.wait_for_result(rospy.Duration(60)) 
-            
-            # If we don't get there in time, abort the goal
-            if not finished_within_time:
-                self.move_base.cancel_goal()
-                rospy.loginfo("Timed out achieving goal")
-            else:
-                # We made it!
-                state = self.move_base.get_state()
-                if state == GoalStatus.SUCCEEDED:
-                    rospy.loginfo("Goal succeeded!")
+        # Send the goal pose to the MoveBaseAction server
+        self.move_base.send_goal(goal)
+        
+        # Allow 1 minute to get there
+        finished_within_time = self.move_base.wait_for_result(rospy.Duration(60))
+        
+        # If we don't get there in time, abort the goal
+        if not finished_within_time:
+            self.move_base.cancel_goal()
+            rospy.loginfo("Timed out achieving goal")
+        else:
+            state = self.move_base.get_state()
+            if state == GoalStatus.SUCCEEDED:
+                rospy.loginfo("Goal succeeded!")
                     
     def init_markers(self):
         # Set up our waypoint markers
         marker_scale = 0.2
-        marker_lifetime = 0 # 0 is forever
+        marker_lifetime = 0
         marker_ns = 'waypoints'
-        # to the GAZEBO_MODEL_PATH environment variable. To do so, add the following line to the end of ~/.bashrc:  
         marker_id = 0
         marker_color = {'r': 1.0, 'g': 0.7, 'b': 1.0, 'a': 1.0}
         
@@ -149,7 +132,7 @@ class MoveBaseSquare():
         self.markers.color.b = marker_color['b']
         self.markers.color.a = marker_color['a']
         
-        self.markers.header.frame_id = 'odom'
+        self.markers.header.frame_id = 'map'
         self.markers.header.stamp = rospy.Time.now()
         self.markers.points = list()
 

@@ -1,3 +1,5 @@
+# TODO(corodro): Re-validate EKF fusion parameters with the current IMU,
+# wheel odometry, and frame tree before changing them.
 # https://github.com/cra-ros-pkg/robot_localization/blob/kinetic-devel/params/ekf_template.yaml
 
 frequency: 30
